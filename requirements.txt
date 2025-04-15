@@ -2,3 +2,4 @@ python-dotenv
 requests
 jsonpath_rw_ext
 urllib3
+boto3
