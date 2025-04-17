@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 urllib3.disable_warnings()
 
 load_dotenv()
-# host = 'https://localhost:9200/'
-host = "https://dev-dsk-ihailong-2b-2e8aa102.us-west-2.amazon.com:9200/"
+host = 'https://localhost:9200/'
+# host = "https://dev-dsk-ihailong-2b-2e8aa102.us-west-2.amazon.com:9200/"
 update_ml_config_url = host + "/.plugins-ml-config/_doc"
 headers = {"Content-Type": "application/json"}
 
@@ -36,6 +36,8 @@ def cleanup():
     url = host + path
     response = requests.get(url=url, auth=auth, verify=False, json={})
     workflows = response.json()
+    if  'error' in workflows or  workflows["hits"]["total"] == 0:
+        return
     for workflow in workflows["hits"]["hits"]:
         _workflow: dict = workflow["_source"]
         if _workflow['name'] == 'Olly II PPL agent' or _workflow['name'] == 'Olly II Claude Model' or _workflow['name'] == 'Olly II Agents':
