@@ -1126,6 +1126,50 @@ def setup_agent(model_id: str):
                         }
                     },
                     {
+                        "id": "create_discover_summary_with_log_pattern_tool",
+                        "type": "create_tool",
+                        "user_inputs": {
+                            "parameters": {
+                                "model_id": model_id,
+                                "prompt": """
+                         Human: You are an assistant that helps to summarize the data and provide data insights.
+        The data are queried from OpenSearch index through user's question which was translated into PPL query.
+        Here is a sample PPL query: `source=<index> | where <field> = <value>`.
+        <data>
+        1. Now you are given ${parameters.sample_count} sample data out of ${parameters.total_count} total data.
+        The user's question is `${parameters.question}`, the translated PPL query is `${parameters.ppl}` and sample data are:
+        ```
+        ${parameters.sample_data}
+        ```
+        2. Analyze the log pattern output provided in <extracted_context_2>${parameters.LogPatternTool.output}</extracted_context_2>. Your analysis should:\n- Identify any common trends, recurring patterns, or anomalies in the log patterns\n- Examine the sample logs for each pattern to identify frequently occurring values, trends, or events that could explain the alert's cause or impact\n- Provide examples of common or frequent elements observed in the sample logs for each pattern\n- Add one typical sample data for each analysis\n
+        </data>
+        
+        <definition>
+        An insight is a deep understanding or realization that is:
+        1. Supported by data: It is derived from the given sample data. It is not a generalized statement independent of the data. It explicitly mentions the specific data.
+        2. Logically deduced from data: It involves logical reasoning and inference based on patterns, trends, or relationships uncovered through data analysis.
+        3. Potentially integrated with real-world knowledge: In some cases, insights may require connecting the data-driven findings with relevant domain knowledge or practical context, such as associating 4xx HTTP codes with server-side errors.
+        </definition>
+
+        <instructions>
+        1. Summarize the sample data in <summarization> tags.
+        2. Generate 5 insights based on the data. Place them in <raw insights> tags.
+        3. Take the following potential actions on the insights provided above, executing only the ones deemed necessary:
+        i. Discard any insights that do not align with the definition of insight within the <definition> tags.
+        ii. Merge related insights or insights that can form a contrast.
+        iii. Provide deeper speculation or explanation about the underlying reasons behind the insights.
+        4. Write the final version of insights in <final insights> tags, sticking to the previous definition of insights provided. Do not judge the effectiveness of insights.
+        5. Do not mention the count of sample or total data. Do not ask for additional data.
+        6. Do not use markdown format.
+
+        You don't need to echo my requirements in response.</instructions>
+                       """
+                            },
+                            "name": "CreateDiscoverSummaryTool",
+                            "type": "MLModelTool"
+                        }
+                    },
+                    {
                         "id": "create_discover_summary_agent",
                         "type": "register_agent",
                         "previous_node_inputs": {
@@ -1136,6 +1180,24 @@ def setup_agent(model_id: str):
                             "type": "flow",
                             "name": "Query discover Summary Agent",
                             "description": "this is a discover result summary agent",
+                        }
+                    },
+                    {
+                        "id": "create_discover_summary_with_log_pattern_agent",
+                        "type": "register_agent",
+                        "previous_node_inputs": {
+                            "create_log_pattern_tool": "tools",
+                            "create_discover_summary_with_log_pattern_tool": "tools"
+                        },
+                        "user_inputs": {
+                            "parameters": {},
+                            "type": "flow",
+                            "name": "Query discover Summary Agent",
+                            "description": "this is a discover result summary agent",
+                            "tools_order": [
+                                "create_log_pattern_tool",
+                                "create_discover_summary_with_log_pattern_tool"
+                            ]
                         }
                     },
                     {
@@ -1228,6 +1290,7 @@ def setup_agent(model_id: str):
         "os_text2vega": extract_agent_id('t2vega_agent'),
         "os_text2vega_with_instructions": extract_agent_id('t2vega_instruction_based_agent'),
         "os_data2summary": extract_agent_id('create_discover_summary_agent'),
+        "os_data2summary_with_log_pattern": extract_agent_id('create_discover_summary_with_log_pattern_agent'),
         "os_index_type_detect": extract_agent_id('index_type_detect_agent'),
     }
 
