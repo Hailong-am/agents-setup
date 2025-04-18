@@ -1165,7 +1165,7 @@ def setup_agent(model_id: str):
         You don't need to echo my requirements in response.</instructions>
                        """
                             },
-                            "name": "CreateDiscoverSummaryTool",
+                            "name": "CreateDiscoverSummaryWithLogPatternTool",
                             "type": "MLModelTool"
                         }
                     },
@@ -1192,8 +1192,8 @@ def setup_agent(model_id: str):
                         "user_inputs": {
                             "parameters": {},
                             "type": "flow",
-                            "name": "Query discover Summary Agent",
-                            "description": "this is a discover result summary agent",
+                            "name": "Query discover Summary Log Pattern Agent",
+                            "description": "this is a discover result summary agent with log pattern",
                             "tools_order": [
                                 "create_log_pattern_tool",
                                 "create_discover_summary_with_log_pattern_tool"
