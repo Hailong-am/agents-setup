@@ -7,9 +7,10 @@ import urllib3
 from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 
+load_dotenv()
+
 urllib3.disable_warnings()
 
-load_dotenv()
 host = 'https://localhost:9200/'
 # host = "https://dev-dsk-ihailong-2b-2e8aa102.us-west-2.amazon.com:9200/"
 update_ml_config_url = host + "/.plugins-ml-config/_doc"
@@ -36,7 +37,7 @@ def cleanup():
     url = host + path
     response = requests.get(url=url, auth=auth, verify=False, json={})
     workflows = response.json()
-    if  'error' in workflows or  workflows["hits"]["total"] == 0:
+    if 'error' in workflows or workflows["hits"]["total"] == 0:
         return
     for workflow in workflows["hits"]["hits"]:
         _workflow: dict = workflow["_source"]
@@ -1241,6 +1242,36 @@ def setup_agent(model_id: str):
                             "name": "Detect Index Type Agent",
                             "description": "this is an agent to detect whether the specified index data is log related or not."
                         }
+                    }
+                ],
+                "edges": [
+                    {
+                        "source": "create_alert_summary_agent",
+                        "dest": "anomaly_detector_suggestion_agent"
+                    },
+                    {
+                        "source": "anomaly_detector_suggestion_agent",
+                        "dest": "create_discover_summary_agent"
+                    },
+                    {
+                        "source": "create_discover_summary_agent",
+                        "dest": "t2vega_agent"
+                    },
+                    {
+                        "source": "t2vega_agent",
+                        "dest": "t2vega_instruction_based_agent"
+                    },
+                    {
+                        "source": "t2vega_instruction_based_agent",
+                        "dest": "index_type_detect_agent"
+                    },
+                    {
+                        "source": "index_type_detect_agent",
+                        "dest": "create_alert_summary_with_log_pattern_agent"
+                    },
+                    {
+                        "source": "create_alert_summary_with_log_pattern_agent",
+                        "dest": "create_discover_summary_with_log_pattern_agent"
                     }
                 ]
             }
