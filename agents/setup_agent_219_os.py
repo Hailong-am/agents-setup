@@ -21,8 +21,7 @@ auth = HTTPBasicAuth(username, password)
 
 access_key = os.getenv('access_key')
 secret_key = os.getenv('secret_key')
-session_token = os.getenv('session_token')
-bedrock_credential = {"access_key": access_key, "secret_key": secret_key, "session_token": session_token}
+bedrock_credential = {"access_key": access_key, "secret_key": secret_key}
 bedrock_endpoint = "https://bedrock-runtime.us-east-1.amazonaws.com/model/anthropic.claude-3-haiku-20240307-v1:0/invoke"
 
 ppl_access_key = os.getenv('ppl_access_key')
