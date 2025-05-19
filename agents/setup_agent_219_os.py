@@ -26,9 +26,8 @@ bedrock_endpoint = "https://bedrock-runtime.us-east-1.amazonaws.com/model/anthro
 
 ppl_access_key = os.getenv('ppl_access_key')
 ppl_secret_key = os.getenv('ppl_secret_key')
-ppl_session_token = os.getenv('ppl_session_token')
 
-sagemaker_credential = {"access_key": ppl_access_key, "secret_key": ppl_secret_key,"session_token": ppl_session_token}
+sagemaker_credential = {"access_key": ppl_access_key, "secret_key": ppl_secret_key }
 sagemaker_endpoint = "https://runtime.sagemaker.us-east-1.amazonaws.com/endpoints/production-olly/invocations"
 
 
