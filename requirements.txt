@@ -1,5 +1,10 @@
-python-dotenv
-requests
+python-dotenv~=1.1.0
+requests~=2.32.3
 jsonpath_rw_ext
-urllib3
-boto3
+urllib3~=2.3.0
+boto3~=1.37.29
+streamlit~=1.44.1
+opensearch-py~=2.8.0
+
+pandas~=2.2.3
+jsonpath-rw-ext~=1.2.2
