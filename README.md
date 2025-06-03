@@ -2,20 +2,22 @@
 
 create a `.env` file under agents directory and put your credentials into this file
 ```shell
-# cluster
-USERNAME=
-PASSWORD=
+cp .env.example .env
 
-#bedrock
-access_key = 
-secret_key = 
-
-# ppl
-ppl_access_key = 
-ppl_secret_key = 
+# put your credential
 ```
 
+
+
 # install dependencies 
+
+Prepare python environment
+```shell
+python -m venv venv 
+source venv/bin/activate
+```
+
+Install dependencies
 
 `pip install -r requirements.txt`
 

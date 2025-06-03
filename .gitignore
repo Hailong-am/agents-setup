@@ -1,3 +1,5 @@
 .idea/
 agents/.env
 agents/tokens.py
+venv/
+.DS_Store
