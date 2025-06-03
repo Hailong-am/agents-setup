@@ -1,14 +1,14 @@
 import base64
 import os
 
-import boto3
 import json
 import logging
 from urllib.parse import urlencode
 
+import boto3
 import requests
 
-from agents.tokens import get_root_session
+# from agents.root_session import get_root_session
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -74,11 +74,14 @@ def model_sanity_check(client, model_ids):
         logger.info(f"perform sanity test on model_id: {model_id}")
         client.deploy_model(model_id)
         predict_resp = client.predict_model(model_id)
-        if 'error' in json.loads(predict_resp):
-            logger.error(f"predict error: {predict_resp}")
-            continue
+        predict_res = json.loads(predict_resp)
+        if 'error' in predict_res:
+            status = predict_res['status']
+            if status == 403:
+                logger.error(f"====Token was not updated====")
+                continue
         else:
-            logger.info(f"predict success: {predict_resp}")
+            logger.debug(f"predict success: {predict_resp}")
 
 
 def update_model_credentials(client, models, credentials, t2ppl_credentials):
@@ -127,15 +130,6 @@ def is_aos(endpoint: str) -> bool:
     # .aos.us-east-1.on.aws
     aos_dual_stack = '.aos.' in endpoint and '.on.aws' in endpoint
     return aos or aos_dual_stack
-
-
-# def encrypt_kms(plain_text: str):
-#     kms_client = root_session.client('kms')
-#     encrypted_text = kms_client.encrypt(
-#         KeyId='arn:aws:kms:us-west-2:330700426359:key/0d58ea37-443e-4860-9ebf-7f5b2c9408ad',
-#         Plaintext=plain_text
-#     )['CiphertextBlob']
-#     return base64.b64encode(encrypted_text).decode('utf-8')
 
 
 class PlaygroundClient:
